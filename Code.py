@@ -1,4 +1,5 @@
 from time import sleep
+import random
 
 #Add Phidgets Library 
 from Phidget22.Phidget import *
@@ -55,7 +56,12 @@ def SpeakText(Text,WaitFor):
     while mixer.music.get_busy() == True and WaitFor == True:
         wait(0.1)
 
+RedName = "Dr. J"
+GreenName = "Dr. J2"
+
 def Won():
+    greenLED.setState(False)
+    redLED.setState(False)
     Winner = ""
     if greenCount >= maxCount:
         Winner = "Green"
@@ -66,9 +72,9 @@ def Won():
         gameRunning = False
         TextToSpeak = "Nothing"
         if Winner == "Red":
-           TextToSpeak = "Red has won with 10 clicks! Green had "+str(greenCount)+" clicks, :( "
+           TextToSpeak = RedName+" has won with 10 clicks! "+GreenName+" had "+str(greenCount)+" clicks, :( "
         else:
-            TextToSpeak = "Green has won with 10 clicks! Red had "+str(redCount)+" clicks, :( "
+            TextToSpeak = GreenName+" has won with 10 clicks! "+RedName+" had "+str(redCount)+" clicks, :( try harder next time"
         print(TextToSpeak)
         SpeakText(TextToSpeak, False)
         for i in range(5):
@@ -83,25 +89,28 @@ def Won():
                 redLED.setState(False)
             wait(0.1)
 print('Started')
-for i in range(3,0,-1):
+for i in range(2,0,-1):
     SpeakText(str(i),False)
     wait(1)
+wait(random.randint(1,3))
 SpeakText("GO!",False)
 wait(0.1)
-while (gameRunning == True):
-    if(redButton.getState() and redPressed == False):
+greenLED.setState(True)
+redLED.setState(True)
+
+while (gameRunning):
+    if(redButton.getState() and not redPressed):
         redPressed = True
         redCount+=1
+        print(redCount)
         Won()
-    elif redButton.getState() == False and redPressed == True:
+    elif not redButton.getState() and redPressed:
         redPressed = False
-    if(greenButton.getState() and greenPressed == False):
+        
+    if(greenButton.getState() and not greenPressed):
         greenPressed = True
         greenCount+=1
+        print(greenCount)
         Won()
-    elif greenButton.getState() == False and greenPressed == True:
+    elif not greenButton.getState() and greenPressed:
         greenPressed = False
-
-
-
-
